@@ -1,13 +1,20 @@
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Label;
 
-public class Server {
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
 
-	protected Shell shlBanco;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+
+public class Server {
+		
+	protected Shell shlServer;
 
 	/**
 	 * Launch the application.
@@ -28,9 +35,9 @@ public class Server {
 	public void open() {
 		Display display = Display.getDefault();
 		createContents();
-		shlBanco.open();
-		shlBanco.layout();
-		while (!shlBanco.isDisposed()) {
+		shlServer.open();
+		shlServer.layout();
+		while (!shlServer.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
 			}
@@ -41,20 +48,52 @@ public class Server {
 	 * Create contents of the window.
 	 */
 	protected void createContents() {
-		shlBanco = new Shell();
-		shlBanco.setSize(366, 301);
-		shlBanco.setText("Banco");
+		shlServer = new Shell();
+		shlServer.setSize(450, 300);
+		shlServer.setText("Server");
 		
-		List list = new List(shlBanco, SWT.BORDER);
-		list.setBounds(10, 31, 222, 208);
+		int n =1;
+		for(int i=0; i<9; i++){
+			for(int j=0; j<10; j++){
+				Label lblNewLabel = new Label(shlServer, SWT.NONE);
+				lblNewLabel.setBounds(10+35*i, 25+15*j, 35, 15);
+				lblNewLabel.setText(String.valueOf(n));
+				n++;
+			}
+		}
 		
-		Button btnEstrai = new Button(shlBanco, SWT.NONE);
-		btnEstrai.setBounds(270, 214, 75, 25);
-		btnEstrai.setText("Estrai");
 		
-		Label lblNumeriEstratti = new Label(shlBanco, SWT.NONE);
-		lblNumeriEstratti.setBounds(83, 10, 86, 15);
-		lblNumeriEstratti.setText("Numeri estratti");
+		Button btnNewButton = new Button(shlServer, SWT.NONE);
+		btnNewButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					// Crei un server di connessione
+					ServerSocket ss = new ServerSocket(9999);
+					while (true) {
+						// riceva una connessione
+						Socket s = ss.accept();
+						// riceva del testo
+						InputStreamReader isr = new InputStreamReader(s.getInputStream());
+						BufferedReader in = new BufferedReader(isr);
+						
+						// Invio i numeri
+						// TODO Auto-generated method stub
+						//	Cartella c = new Cartella();
+						// L'elenco dei numeri da dare al client
+						/*int numeri[] = c.getNumeri();
+						for (int i : numeri) {
+							System.out.print(i + " ");
+							s.getOutputStream().write(i);
+						}*/
+					}
+				} catch (Exception exception) {
+					exception.printStackTrace();
+				}
+			}
+		});
+		btnNewButton.setBounds(349, 214, 75, 25);
+		btnNewButton.setText("New Button");
 
 	}
 }
