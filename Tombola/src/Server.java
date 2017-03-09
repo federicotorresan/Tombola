@@ -113,7 +113,7 @@ public class Server {
 				inizia();
 			}
 		});
-		btnNewButton.setBounds(349, 214, 75, 25);
+		btnNewButton.setBounds(10, 214, 75, 25);
 		btnNewButton.setText("Inizia");
 		
 		Button btnEstrai = new Button(shlServer, SWT.NONE);
@@ -129,7 +129,7 @@ public class Server {
 				out.println(ncas+"");
 			}
 		});
-		btnEstrai.setBounds(257, 214, 75, 25);
+		btnEstrai.setBounds(349, 214, 75, 25);
 		btnEstrai.setText("Estrai");
 
 	}
