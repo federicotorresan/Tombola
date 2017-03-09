@@ -1,11 +1,14 @@
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.swt.widgets.Label;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
@@ -14,6 +17,8 @@ import org.eclipse.swt.events.SelectionEvent;
 
 public class Server {
 		
+	PrintWriter out;
+	private ArrayList<Label>Numeri = new ArrayList<Label>();
 	protected Shell shlServer;
 
 	/**
@@ -27,6 +32,43 @@ public class Server {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void inizia(){
+		Runnable r=new Runnable(){
+
+			@Override
+			public void run() {
+				try {
+					// Crei un server di connessione
+					ServerSocket ss = new ServerSocket(9999);
+					while (true) {
+						// riceva una connessione
+						Socket s = ss.accept();
+						// riceva del testo
+						InputStreamReader isr = new InputStreamReader(s.getInputStream());
+						BufferedReader in = new BufferedReader(isr);
+						out= new PrintWriter(s.getOutputStream(), true);
+						System.out.println("ciao");
+						
+						// Invio i numeri
+						String mandati="";
+						for (int i=0; i<15; i++) {
+							//prendo e aggiungo un numero
+							mandati+=((int)(Math.random()*90)+1)+";";
+						}
+						out.println(mandati);
+						
+					}
+				} catch (Exception exception) {
+					exception.printStackTrace();
+				}
+				
+			}
+			
+		};
+		Thread t=new Thread(r);
+		t.start();
 	}
 
 	/**
@@ -59,6 +101,7 @@ public class Server {
 				lblNewLabel.setBounds(10+35*i, 25+15*j, 35, 15);
 				lblNewLabel.setText(String.valueOf(n));
 				n++;
+				Numeri.add(lblNewLabel);
 			}
 		}
 		
@@ -67,33 +110,27 @@ public class Server {
 		btnNewButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				try {
-					// Crei un server di connessione
-					ServerSocket ss = new ServerSocket(9999);
-					while (true) {
-						// riceva una connessione
-						Socket s = ss.accept();
-						// riceva del testo
-						InputStreamReader isr = new InputStreamReader(s.getInputStream());
-						BufferedReader in = new BufferedReader(isr);
-						
-						// Invio i numeri
-						// TODO Auto-generated method stub
-						//	Cartella c = new Cartella();
-						// L'elenco dei numeri da dare al client
-						/*int numeri[] = c.getNumeri();
-						for (int i : numeri) {
-							System.out.print(i + " ");
-							s.getOutputStream().write(i);
-						}*/
-					}
-				} catch (Exception exception) {
-					exception.printStackTrace();
-				}
+				inizia();
 			}
 		});
 		btnNewButton.setBounds(349, 214, 75, 25);
-		btnNewButton.setText("New Button");
+		btnNewButton.setText("Inizia");
+		
+		Button btnEstrai = new Button(shlServer, SWT.NONE);
+		btnEstrai.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				int ncas=((int)(Math.random()*90)+1);
+				for (int i = 0; i < Numeri.size(); i++) {
+					if(Numeri.get(i).getText().equals(ncas+"")){
+						Numeri.get(i).setBackground(SWTResourceManager.getColor(SWT.COLOR_GREEN));
+					}
+				}
+				out.println(ncas+"");
+			}
+		});
+		btnEstrai.setBounds(257, 214, 75, 25);
+		btnEstrai.setText("Estrai");
 
 	}
 }
